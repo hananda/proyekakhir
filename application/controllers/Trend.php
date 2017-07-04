@@ -15,14 +15,22 @@ class Trend extends CI_Controller {
 		$this->load->model('smartphone');
 		$data = array();
 		$data['produk'] = $this->smartphone->getproduk();
-		$data['content'] = $this->load->view('trend',$data,TRUE);
+		if (!file_exists('./setting.txt')) {
+			$data['content'] = "Setting belum ditentukan !!";
+		}else{
+			$data['content'] = $this->load->view('trend',$data,TRUE);
+		}
 		$this->load->view('main', $data, FALSE);
 	}
 
 	function history()
 	{
 		$data = array();
-		$data['content'] = $this->load->view('history_trend',$data,TRUE);
+		if (!file_exists('./setting.txt')) {
+			$data['content'] = "Setting belum ditentukan !!";
+		}else{
+			$data['content'] = $this->load->view('history_trend',$data,TRUE);
+		}
 		$this->load->view('main', $data, FALSE);
 	}
 

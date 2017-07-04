@@ -88,6 +88,7 @@
                             <th width="100px">No</th>
                             <th width="250px">Nama Produk </th>
                             <th>Keyword </th>
+                            <th>Spesifikasi </th>
                         </tr>
                     </thead>
 
@@ -104,6 +105,7 @@
       var table = $('#tabelsmartphone').DataTable({
             // "order": [[ 4, "asc" ]],
             "columns": [
+              {"orderable":false },
               {"orderable":false },
               {"orderable":false },
               {"orderable":false }

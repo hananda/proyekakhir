@@ -137,6 +137,7 @@
                                 </li>
                                 <li><a href="<?php echo base_url(); ?>cek_kata.aspx"><i class="fa fa-search"></i> Cek Kata </a></li>
                                 <li><a href="<?php echo base_url(); ?>text_processing.aspx"><i class="fa fa-search"></i> Text Processing</a></li>
+                                <li><a href="<?php echo base_url(); ?>setting.aspx"><i class="fa fa-gear"></i> Setting</a></li>
                             </ul>
                         </div>
                         <!-- <div class="menu_section">

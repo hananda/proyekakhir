@@ -67,6 +67,8 @@ class M_trend extends CI_Model {
 
 	function detail_trend()
 	{
+        $filedata = @file_get_contents("./setting.txt");
+        $setting = json_decode($filedata);
 		$idtrend = $this->input->post('idtrend');
 		$dataorder = array();
         // $dataorder[3] = "tgl_awal_beasiswa";
@@ -80,7 +82,7 @@ class M_trend extends CI_Model {
         $start = intval($_REQUEST['start']);
         $order = $this->input->post('order');
 
-		$query = "SELECT *
+		$query = "SELECT data_search.*,m_produk.*,((data_search_pos*".$setting->bobotpositif.")+(data_search_neg*".$setting->bobotnegatif.")+(data_search_net*".$setting->bobotnetral.")) as bobot
 				FROM data_search 
 				LEFT join m_produk on data_search.data_search_id_produk = m_produk.m_produk_id
 				where data_search_id_trend = '".$idtrend."'";
@@ -91,7 +93,7 @@ class M_trend extends CI_Model {
         // OR PROGRAM_TAHUN LIKE '%". strtolower($search) ."%'
 		// var_dump($order);
 		// if($order[0]['column']){
-            $query.= " order by data_search_pos desc";
+            $query.= " order by bobot desc";
   //       }
 
         $iTotalRecords = $this->db->query("SELECT COUNT(*) AS JUMLAH FROM (".$query.") A")->row()->JUMLAH;
@@ -102,13 +104,36 @@ class M_trend extends CI_Model {
         $i = $start + 1;
         $result = array();
         foreach ($data as $d) {
+            $btnbayes = '';
+            if (!$d['data_search_naive_bayes']) {
+                $btnbayes = '<button class="btn btn-success btnbayes" data-id="'.$d['data_search_id'].'">Hitung Naive Bayes</button>';
+            }else{
+                $btnbayes = '<button class="btn btn-success btnbayes" data-id="'.$d['data_search_id'].'">Hitung Ulang Naive Bayes</button>';
+            }
             $r = array();
+            $posbayes = '';
+            $netbayes = '';
+            $negbayes = '';
+            $sentbayes = '';
+            if ($d['data_search_pos_bayes']) {
+                $posbayes = '|'.$d['data_search_pos_bayes'];
+            }
+            if ($d['data_search_net_bayes']) {
+                $netbayes = '|'.$d['data_search_net_bayes'];
+            }
+            if ($d['data_search_neg_bayes']) {
+                $negbayes = '|'.$d['data_search_neg_bayes'];
+            }
+            if ($d['data_search_sentiment_bayes']) {
+                $sentbayes = '|'.$d['data_search_sentiment_bayes'];
+            }
 			$r[0] = $i;
 			$r[1] = trim($d['m_produk_nama']);
-			$r[2] = trim($d['data_search_pos']);
-			$r[3] = trim($d['data_search_neg']);
-			$r[4] = trim($d['data_search_net']);
-			$r[5] = trim($d['data_search_sentiment']);
+			$r[2] = trim($d['data_search_pos']).$posbayes;
+			$r[3] = trim($d['data_search_neg']).$negbayes;
+			$r[4] = trim($d['data_search_net']).$netbayes;
+			$r[5] = trim($d['data_search_sentiment']).$sentbayes;
+            $r[6] = '<a class="btn btn-info btndetail" href="'.base_url().'klasifikasi/detailklasifikasi/'.$d['data_search_id'].'">Detail</a>'.$btnbayes;
             array_push($result, $r);
             $i++;
         }

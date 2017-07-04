@@ -60,6 +60,23 @@
                           <input id="tanggal" class="date-picker form-control col-md-7 col-xs-12" name="tgl" required type="text">
                       </div>
                   </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Jumlah Smartphone <span class="required">*</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input id="jmlsmartphone" class="form-control col-md-7 col-xs-12" name="jmlsmartphone" required type="text">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Merk Sama <span class="required">*</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select name="merksama" id="merksama" class="form-control col-md-7 col-xs-12">
+                            <option value="T">Tidak</option>
+                            <option value="Y">Ya</option>
+                          </select>
+                      </div>
+                  </div>
                   <div class="ln_solid"></div>
                   <div class="form-group">
                       <div class="col-md-6 col-sm-12 col-xs-12 col-md-offset-6">
@@ -82,7 +99,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2><?php echo $this->config->item('jml_sim_phone'); ?> Smartphone Rekomendasi</h2>
+                <h2><span id="jmlprediksi"><?php //echo $this->config->item('jml_sim_phone'); ?></span> Smartphone Rekomendasi</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><!-- <i class="fa fa-wrench"></i> --></a>
@@ -140,6 +157,7 @@
         $(".btnsearch").attr('disabled', true);
         $("#search").text('Loading...');
         $("#search2").text('Loading...');
+        $("#jmlprediksi").text($("#jmlsmartphone").val());
 
         var data = $("#formsearch").serialize();
         $.ajax({

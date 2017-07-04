@@ -61,7 +61,7 @@ class Klasifikasi extends CI_Controller {
 			    array_push($stopword, $value);
 			    continue;
 			}
-			$r_stem = $this->PorterStemmer->stem($value);
+			$r_stem = $this->porterstemmer->stem($value);
 			if ($r_stem != $value) {
 				array_push($stemming, array('kataawal'=>$value,'kataakhir'=>$r_stem));
 				$value = $r_stem;
@@ -388,6 +388,96 @@ class Klasifikasi extends CI_Controller {
             }
             $this->db->query("update data_train set train_learn = 1 where train_id = ".$r->train_id);
         }
+    }
+
+    public function pdfsentriword($idsearch=0)
+    {
+    	require_once __DIR__."/../third_party/mpdf60/mpdf.php";
+    	// echo __DIR__."/../third_party/mpdf60/mpdf.php";
+    	$mpdf=new mPDF('c'); 
+    	$data = $this->m_klasifikasi->_get_list_tweet_pdf($idsearch);
+    	$template = '
+			<!DOCTYPE html>
+			<html>
+			<head>
+			</head>
+			<body>
+				<table border="1" style="border-collapse:collapsed;">
+					<thead>
+						<tr>
+							<th>No</th>
+                            <th>Komentar </th>
+                            <th>Pos </th>
+                            <th>Neg </th>
+                            <th>Net </th>
+                            <th>Kesimpulan </th>
+						</tr>
+					</thead>
+					<tbody>';
+		if ($data->num_rows() > 0) {
+			$i=1;
+			foreach ($data->result() as $r) {
+				$template.= '<tr>
+							<td>'.$i++.'</td>
+							<td>'.$r->data_tweet_text.'</td>
+							<td>'.$r->data_tweet_index_pos.'</td>
+							<td>'.$r->data_tweet_index_neg.'</td>
+							<td>'.$r->data_tweet_index_net.'</td>
+							<td>'.$r->data_tweet_sentiment.'</td>
+						</tr>';
+			}
+		}
+		$template.=	'</tbody>
+				</table>
+			</body>
+			</html>';
+		$mpdf->WriteHTML($template);
+		$mpdf->Output();
+    }
+
+    public function pdfbayes($idsearch=0)
+    {
+    	require_once __DIR__."/../third_party/mpdf60/mpdf.php";
+    	// echo __DIR__."/../third_party/mpdf60/mpdf.php";
+    	$mpdf=new mPDF('c'); 
+    	$data = $this->m_klasifikasi->_get_list_tweet_bayes_pdf($idsearch);
+    	$template = '
+			<!DOCTYPE html>
+			<html>
+			<head>
+			</head>
+			<body>
+				<table border="1" style="border-collapse:collapsed;">
+					<thead>
+						<tr>
+							<th>No</th>
+                            <th>Komentar </th>
+                            <th>Pos </th>
+                            <th>Neg </th>
+                            <th>Net </th>
+                            <th>Kesimpulan </th>
+						</tr>
+					</thead>
+					<tbody>';
+		if ($data->num_rows() > 0) {
+			$i=1;
+			foreach ($data->result() as $r) {
+				$template.= '<tr>
+							<td>'.$i++.'</td>
+							<td>'.$r->data_tweet_text.'</td>
+							<td>'.$r->data_tweet_index_pos.'</td>
+							<td>'.$r->data_tweet_index_neg.'</td>
+							<td>'.$r->data_tweet_index_net.'</td>
+							<td>'.$r->data_tweet_sentiment.'</td>
+						</tr>';
+			}
+		}
+		$template.=	'</tbody>
+				</table>
+			</body>
+			</html>';
+		$mpdf->WriteHTML($template);
+		$mpdf->Output();
     }
 
 }

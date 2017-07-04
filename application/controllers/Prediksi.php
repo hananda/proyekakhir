@@ -15,14 +15,22 @@ class Prediksi extends CI_Controller {
 		$this->load->model('smartphone');
 		$data = array();
 		$data['produk'] = $this->smartphone->getproduk();
-		$data['content'] = $this->load->view('prediksi',$data,TRUE);
+		if (!file_exists('./setting.txt')) {
+			$data['content'] = "Setting belum ditentukan !!";
+		}else{
+			$data['content'] = $this->load->view('prediksi',$data,TRUE);
+		}
 		$this->load->view('main', $data, FALSE);
 	}
 
 	function history()
 	{
 		$data = array();
-		$data['content'] = $this->load->view('history_prediksi',$data,TRUE);
+		if (!file_exists('./setting.txt')) {
+			$data['content'] = "Setting belum ditentukan !!";
+		}else{
+			$data['content'] = $this->load->view('history_prediksi',$data,TRUE);
+		}
 		$this->load->view('main', $data, FALSE);
 	}
 
@@ -36,6 +44,9 @@ class Prediksi extends CI_Controller {
 
 	function createprediksi()
 	{
+
+		$filedata = @file_get_contents("./setting.txt");
+		$setting = json_decode($filedata);
 		$msg = array();
 		$dataparam = array();
 		$q = $this->input->post('q');
@@ -44,6 +55,8 @@ class Prediksi extends CI_Controller {
 		$dataparam['data_prediksi_jml_komentar'] = $this->input->post('count');
 		$dataparam['data_prediksi_tipe'] = $this->input->post('tipe');
 		$dataparam['data_prediksi_produk'] = $this->input->post('q');
+		$jmlproduk = $this->input->post('jmlsmartphone');
+		$merksama = $this->input->post('merksama');
 		$idprediksi = $this->m_prediksi->save_prediksi($dataparam);
 		if (!$idprediksi) {
 			$msg['tipe'] = 'danger';
@@ -51,16 +64,20 @@ class Prediksi extends CI_Controller {
 			$this->output->set_content_type('application/json')->set_output(json_encode($msg));return;
 		}
 		$dataproduk = $this->db->query("SELECT * from m_produk where UPPER(m_produk_nama) = '".strtoupper($dataparam['data_prediksi_produk'])."'")->row();
+		$tambahanwhere = "";
+		if ($merksama == 'Y') {
+			$tambahanwhere = " and m_produk_keyword = '".$dataproduk->m_produk_keyword."' ";
+		}
 
 		$getsimproduk = $this->db->query(
 			"SELECT m_produk_nama from m_produk WHERE m_produk_nama <> '".$dataproduk->m_produk_nama."' and 
-			m_produk_screen_size between ".($dataproduk->m_produk_screen_size - $this->config->item('range_size'))." and ".($dataproduk->m_produk_screen_size + $this->config->item('range_size'))." AND 
-			m_produk_camera between ".($dataproduk->m_produk_camera - $this->config->item('range_camera'))." and ".($dataproduk->m_produk_camera + $this->config->item('range_camera'))." AND 
-			m_produk_ram between ".($dataproduk->m_produk_ram - $this->config->item('range_ram'))." and ".($dataproduk->m_produk_ram + $this->config->item('range_ram'))." AND 
-			m_produk_battery between ".($dataproduk->m_produk_battery - $this->config->item('range_battery'))." and ".($dataproduk->m_produk_battery + $this->config->item('range_battery'))." AND 
-			m_produk_sensors between ".($dataproduk->m_produk_sensors - $this->config->item('range_sensor'))." and ".($dataproduk->m_produk_sensors + $this->config->item('range_sensor'))." AND 
-			(m_produk_mem_internal = ".$dataproduk->m_produk_mem_internal." or m_produk_mem_internal1 = ".$dataproduk->m_produk_mem_internal1." or m_produk_mem_internal2 = ".$dataproduk->m_produk_mem_internal2.")
-		 order by m_produk_screen_size,m_produk_camera,m_produk_ram,m_produk_battery,m_produk_sensors desc limit ".$this->config->item('jml_sim_phone'))->result();
+			m_produk_screen_size between ".($dataproduk->m_produk_screen_size - $setting->rangesize)." and ".($dataproduk->m_produk_screen_size + $setting->rangesize)." AND 
+			m_produk_camera between ".($dataproduk->m_produk_camera - $setting->rangecamera)." and ".($dataproduk->m_produk_camera + $setting->rangecamera)." AND 
+			m_produk_ram between ".($dataproduk->m_produk_ram - $setting->rangeram)." and ".($dataproduk->m_produk_ram + $setting->rangeram)." AND 
+			m_produk_battery between ".($dataproduk->m_produk_battery - $setting->rangebattery)." and ".($dataproduk->m_produk_battery + $setting->rangebattery)." AND 
+			m_produk_sensors between ".($dataproduk->m_produk_sensors - $setting->rangesensor)." and ".($dataproduk->m_produk_sensors + $setting->rangesensor)." AND 
+			(m_produk_mem_internal = ".$dataproduk->m_produk_mem_internal." or m_produk_mem_internal1 = ".$dataproduk->m_produk_mem_internal1." or m_produk_mem_internal2 = ".$dataproduk->m_produk_mem_internal2.") ".$tambahanwhere." 
+		 order by m_produk_screen_size,m_produk_camera,m_produk_ram,m_produk_battery,m_produk_sensors desc limit ".$jmlproduk)->result();
 		$arrproduk = array();
 		foreach ($getsimproduk as $r) {
 			array_push($arrproduk, $r->m_produk_nama);

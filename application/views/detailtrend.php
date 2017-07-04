@@ -51,6 +51,7 @@
                             <th>Neg </th>
                             <th>Net </th>
                             <th>Kesimpulan </th>
+                            <th> </th>
                         </tr>
                     </thead>
 
@@ -67,6 +68,7 @@
         var table = $('#tabeldetailsummary').DataTable({
               // "order": [[ 4, "asc" ]],
               "columns": [
+                {"orderable":false },
                 {"orderable":false },
                 {"orderable":false },
                 {"orderable":false },
@@ -97,6 +99,17 @@
               setTimeout(function () {
                   //initEvent();
               }, 500);
+        });
+
+        $(document).on('click', '.btnbayes', function(event) {
+            event.preventDefault();
+            var id = $(this).data().id;
+            $(".btnbayes").attr('disabled', true);
+            $(".btndetail").attr('disabled', true);
+            $(this).text('Loading....');
+            $.post('<?php echo base_url(); ?>klasifikasi/hitungdata_bayes/'+id, {}, function(data, textStatus, xhr) {
+              table.ajax.reload();
+            });
         });
     });
 </script>

@@ -31,10 +31,11 @@
             <div class="x_title">
                 <h2>Tabel Detail Summary</h2>
                 <ul class="nav navbar-right panel_toolbox">
+                    <button id="btnpdf" class="btn btn-default">Export PDF</button>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><!-- <i class="fa fa-wrench"></i> --></a>
                     </li>
-                    <!-- <li><a id="btnadd"><i class="fa fa-plus"></i></a>
+                   <!--  <li><a id="btnadd"><i class="fa fa-plus"></i></a>
                     </li> -->
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -78,6 +79,7 @@
                             </li> -->
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
+                            <button id="btnpdf2" class="btn btn-default">Export PDF</button>
                         </ul>
                         <div class="clearfix"></div>
                     </div>
@@ -106,6 +108,16 @@
 <?php endif ?>
 <script type="text/javascript">
     $(document).ready(function () {
+        $("#btnpdf").click(function (e) {
+          e.preventDefault();
+          window.open('<?php echo base_url(); ?>klasifikasi/pdfsentriword/<?php echo $idsearch; ?>');
+        });
+
+        $("#btnpdf2").click(function (e) {
+          e.preventDefault();
+          window.open('<?php echo base_url(); ?>klasifikasi/pdfbayes/<?php echo $idsearch; ?>');
+        });
+
         var table = $('#tabeldetailsummary').DataTable({
               // "order": [[ 4, "asc" ]],
               "columns": [

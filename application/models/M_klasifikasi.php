@@ -938,6 +938,22 @@ class M_klasifikasi extends CI_Model {
 		}
 		return true;
 	}
+
+	function _get_list_tweet_pdf($idsearch)
+	{
+		$query = "SELECT *
+				FROM data_tweet where data_tweet_id_search = '".$idsearch."'";
+		$records = $this->db->query($query);
+        return $records;
+	}
+
+	function _get_list_tweet_bayes_pdf($idsearch)
+	{
+		$query = "SELECT *
+				FROM data_tweet where data_tweet_id_search = '".$idsearch."'";
+		$records = $this->db->query($query);
+        return $records;
+	}
 }
 
 /* End of file m_klasifikasi.php */

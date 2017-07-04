@@ -21,7 +21,7 @@ class Smartphone extends CI_Model {
 				FROM m_produk";
 		if($search['value'] != ""){
             $query .=preg_match("/WHERE/i",$query)? " AND ":" WHERE ";
-			$query .= "(m_produk_nama = '". $search['value'] ."')";
+			$query .= "(m_produk_nama LIKE '%". $search['value'] ."%')";
 		}
         // OR PROGRAM_TAHUN LIKE '%". strtolower($search) ."%'
 		// var_dump($order);
@@ -40,8 +40,14 @@ class Smartphone extends CI_Model {
         foreach ($data as $d) {
             $r = array();
 			$r[0] = $i;
-			$r[1] = $d['m_produk_nama'];
-			$r[2] = $d['m_produk_keyword'];
+			$r[1] = '<a href="'.$d['m_produk_url'].'" target="_blank">'.$d['m_produk_nama'].'</a>';
+            $r[2] = $d['m_produk_keyword'];
+			$r[3] = "Ukuran Layar ".$d['m_produk_screen_size']."Inch <br>
+                    Ram ".$d['m_produk_ram']." Mb <br>
+                    Baterai ".$d['m_produk_battery']." Mah <br>
+                    Jumlah Sensor ".$d['m_produk_sensors']."<br>
+                    Memori Internal ".$d['m_produk_mem_internal']." Gb <br>
+                    Kamera ".$d['m_produk_camera']." Mp";
             array_push($result, $r);
             $i++;
         }

@@ -1,0 +1,1 @@
+{"rangesize":"1","rangecamera":"2","rangeram":"256","rangebattery":"500","rangesensor":"2","bobotpositif":"1","bobotnegatif":"-1","bobotnetral":"0"}
